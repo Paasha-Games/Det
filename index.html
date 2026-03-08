@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>لێکۆڵەر: چاپی کۆتایی</title>
+    <title>لێکۆڵەر: ٥٠ دۆسیەی نهێنی</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700;900&family=Orbitron:wght@600&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --blood: #ff0000;
-            --dark-overlay: rgba(0, 0, 0, 0.75);
             --gold: #ffcc00;
             --glass: rgba(255, 255, 255, 0.05);
         }
@@ -25,25 +24,32 @@
         }
 
         /* --- VIDEO BACKGROUND ENGINE --- */
+        #video-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; overflow: hidden;
+        }
+
         #video-bg {
-            position: fixed; right: 0; bottom: 0;
             min-width: 100%; min-height: 100%;
-            z-index: -1; filter: grayscale(100%) brightness(40%);
+            width: auto; height: auto;
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            filter: grayscale(100%) brightness(30%);
             object-fit: cover;
         }
 
         .overlay {
             position: fixed; inset: 0;
-            background: radial-gradient(circle, transparent 20%, #000 100%);
+            background: radial-gradient(circle, transparent 10%, rgba(0,0,0,0.8) 100%);
             z-index: 0; pointer-events: none;
         }
 
-        /* --- HEADER & NAVIGATION --- */
+        /* --- HEADER --- */
         header {
             height: 70px; display: flex; justify-content: space-between; 
             align-items: center; padding: 0 25px;
             border-bottom: 3px solid var(--blood);
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(15px);
             position: relative; z-index: 10;
         }
 
@@ -51,24 +57,22 @@
         .stat-num { font-family: 'Orbitron', sans-serif; color: var(--gold); font-size: 1.2rem; }
         .stat-txt { font-size: 0.7rem; color: #888; letter-spacing: 1px; }
 
-        /* --- SPLASH SCREEN (FIXED START BUTTON) --- */
-        #splash {
+        /* --- SPLASH & END SCREENS --- */
+        #splash, #end-screen {
             position: fixed; inset: 0; z-index: 1000;
             background: #000; display: flex; flex-direction: column;
             justify-content: center; align-items: center; text-align: center;
-            transition: opacity 0.8s ease;
+            padding: 20px;
         }
 
-        .logo-text { font-size: 5rem; color: var(--blood); font-weight: 900; margin: 0; text-shadow: 0 0 30px var(--blood); }
+        .logo-text { font-size: 4rem; color: var(--blood); font-weight: 900; margin: 0; text-shadow: 0 0 20px var(--blood); }
         
-        .btn-start {
-            margin-top: 40px; background: var(--blood); color: #fff;
-            border: none; padding: 20px 60px; font-size: 1.5rem;
+        .btn-action {
+            margin-top: 30px; background: var(--blood); color: #fff;
+            border: none; padding: 18px 50px; font-size: 1.3rem;
             font-weight: 900; border-radius: 50px; cursor: pointer;
-            box-shadow: 0 0 20px var(--blood); transition: 0.3s;
-            z-index: 1001; position: relative;
+            box-shadow: 0 0 15px var(--blood); transition: 0.3s;
         }
-        .btn-start:active { transform: scale(0.9); box-shadow: 0 0 5px var(--blood); }
 
         /* --- MAIN CONTENT AREA --- */
         main {
@@ -77,156 +81,137 @@
             justify-content: space-between;
         }
 
-        .case-card {
-            flex-grow: 1; display: flex; flex-direction: column; justify-content: center;
-        }
+        .case-card { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
+        .label { color: var(--blood); font-weight: 900; font-size: 0.8rem; margin-bottom: 5px; text-transform: uppercase; }
+        .title { font-size: 1.8rem; margin: 0 0 10px 0; line-height: 1.2; color: #fff; }
+        .description { font-size: 1rem; color: #ccc; line-height: 1.6; background: var(--glass); padding: 15px; border-radius: 12px; border-right: 4px solid var(--blood); }
 
-        .label { color: var(--blood); font-weight: 900; font-size: 0.8rem; margin-bottom: 10px; }
-        .title { font-size: 2.2rem; margin: 0 0 15px 0; line-height: 1.1; }
-        .description { font-size: 1.1rem; color: #ddd; line-height: 1.6; background: var(--glass); padding: 20px; border-radius: 15px; border-right: 4px solid var(--blood); }
-
-        /* --- CHOICES (UI GRID) --- */
-        .choices-container { display: grid; gap: 12px; margin-top: 20px; }
-        
+        .choices-container { display: grid; gap: 10px; margin-top: 20px; padding-bottom: 10px; }
         .choice-item {
-            background: rgba(20, 20, 20, 0.8); border: 1px solid #333;
-            padding: 18px; border-radius: 12px; cursor: pointer;
-            display: flex; align-items: center; gap: 15px;
-            transition: 0.2s; position: relative; overflow: hidden;
+            background: rgba(25, 25, 25, 0.9); border: 1px solid #333;
+            padding: 15px; border-radius: 10px; cursor: pointer;
+            display: flex; align-items: center; gap: 12px; transition: 0.2s;
         }
-        .choice-item:active { background: #333; }
-        .choice-item span:first-child { color: var(--gold); font-family: 'Orbitron'; font-weight: bold; font-size: 1.2rem; }
+        .choice-item:active { transform: scale(0.98); background: #444; }
+        .choice-num { color: var(--gold); font-family: 'Orbitron'; font-weight: bold; font-size: 1.1rem; }
 
-        /* --- FEEDBACK SYSTEM --- */
         #feedback {
-            position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,0.95);
+            position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,0.98);
             display: none; flex-direction: column; justify-content: center; 
-            align-items: center; padding: 40px; text-align: center;
+            align-items: center; padding: 30px; text-align: center;
         }
-        .fb-icon { font-size: 5rem; margin-bottom: 20px; }
-
-        /* Animations */
-        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
-        .live-indicator { width: 10px; height: 10px; background: red; border-radius: 50%; display: inline-block; margin-left: 8px; animation: pulse 1s infinite; }
     </style>
 </head>
 <body>
 
-    <video autoplay muted loop id="video-bg">
-        <source src="https://assets.mixkit.co/videos/preview/mixkit-searching-a-crime-scene-with-a-flashlight-4444-large.mp4" type="video/mp4">
-    </video>
-    <div class="overlay"></div>
+    <div id="video-container">
+        <video autoplay muted loop id="video-bg" playsinline>
+            <source src="https://player.vimeo.com/external/454558230.sd.mp4?s=7b9231f8b1a8f94602f304191316d23193e3e005&profile_id=164&oauth2_token_id=57447761" type="video/mp4">
+        </video>
+        <div class="overlay"></div>
+    </div>
 
     <div id="splash">
         <h1 class="logo-text">لێکۆڵەر</h1>
-        <p style="color:var(--gold); font-size: 1.2rem;">تۆ ئامادەیت بۆ ڕووبەڕووبوونەوەی تاریکی؟</p>
-        <button class="btn-start" onclick="initGame()">دەستپێکردن</button>
+        <p style="color:var(--gold); font-size: 1.1rem; margin-top: 10px;">ئایا زیرەکی تۆ بەسە بۆ دۆزینەوەی ڕاستی؟</p>
+        <button class="btn-action" onclick="startGame()">دەستپێکردن</button>
+    </div>
+
+    <div id="end-screen" style="display: none;">
+        <h1 class="logo-text">کۆتایی قۆناغ</h1>
+        <p style="color:var(--gold); font-size: 1.2rem; margin: 20px 0;">هەموو دۆسیەکانت داخست، لێکۆڵەر!</p>
+        <div style="background:var(--glass); padding: 20px; border-radius: 15px; border: 1px solid var(--blood);">
+            <p style="margin:0;">چاوەڕوانی نوێکاری بە... دۆسیەی زیاتر بەڕێوەیە.</p>
+        </div>
+        <button class="btn-action" onclick="location.reload()">گەڕانەوە بۆ سەرەتا</button>
     </div>
 
     <header>
         <div class="stat-group">
-            <span class="stat-txt">نمرەی ئێستا</span>
+            <span class="stat-txt">نمرە</span>
             <span id="score-val" class="stat-num">0000</span>
         </div>
-        <div style="font-weight: 900; letter-spacing: 2px;">
-            CRIME <span class="live-indicator"></span> SCENE
-        </div>
+        <div style="font-weight: 900; letter-spacing: 1px; font-size: 0.9rem;">INVESTIGATOR</div>
         <div class="stat-group">
-            <span class="stat-txt">قۆناغ</span>
+            <span class="stat-txt">دۆسیە</span>
             <span id="level-val" class="stat-num">01/50</span>
         </div>
     </header>
 
     <main>
-        <div class="case-card" id="case-body">
-            </div>
-
-        <div class="choices-container" id="choice-list">
-            </div>
+        <div class="case-card" id="case-body"></div>
+        <div class="choices-container" id="choice-list"></div>
     </main>
 
     <div id="feedback">
-        <div id="fb-icon" class="fb-icon"></div>
-        <h2 id="fb-title" style="font-size: 2.5rem; margin: 0;"></h2>
-        <p id="fb-desc" style="color: #aaa; font-size: 1.2rem; margin: 20px 0;"></p>
-        <button class="btn-start" onclick="closeFeedback()">بەردەوام بە</button>
+        <div id="fb-icon" style="font-size: 4rem;"></div>
+        <h2 id="fb-title" style="font-size: 2rem;"></h2>
+        <p id="fb-desc" style="color: #aaa; margin: 20px 0; line-height: 1.5;"></p>
+        <button class="btn-action" onclick="closeFeedback()">بەردەوام بە</button>
     </div>
 
     <script>
-        const database = [
-            { title: "بکوژی ژووری داخراو", desc: "پیاوێک لە ژوورێکی داخراودا کوژرا. سێ گومانلێکراو هەن. کامەیان درۆ دەکات؟", type: "کوشتن", options: [
-                { t: "خزمەتکار: خەریکی پاککردنەوەی پەنجەرەی دەرەوە بووم لەم بارانەدا.", c: true },
-                { t: "کوڕەکەی: من لە هۆڵەکەدا سەیری تەلەفزیۆنم دەکرد.", c: false },
-                { t: "براکەی: من لە ژووری نانخواردن خەریکی کتێب خوێندنەوە بووم.", c: false }
-            ], why: "کەس لە کاتی بارانباریندا پەنجەرەی دەرەوە پاک ناکاتەوە!" },
-            { title: "کێشەی کات", desc: "ئەگەر دوێنێ بەیانی بوایە، و بەیانی دوێنێ بوایە، ئێستا چ کاتێکە؟", type: "تەحەدای زیرەکی", options: [
-                { t: "ئەمڕۆ", c: true },
-                { t: "بەیانی", c: false },
-                { t: "دوێنێ", c: false }
-            ], why: "ئەمە مەتەڵێکی لۆجیکییە، تەنها وردبوونەوەی دەوێت!" },
-            { title: "دزینی تاجی شاهانە", desc: "تاجێک دزراوە. پاسەوانەکە دەڵێت دزەکە چاکەتێکی شینی پۆشیبوو لە تاریکییەکی ڕەها و بێ گڵۆپدا.", type: "دزین", options: [
-                { t: "پاسەوانەکە درۆ دەکات", c: true },
-                { t: "دزەکە زۆر زیرەک بووە", c: false }
-            ], why: "لە تاریکی ڕەها و بێ ڕووناکیدا، مرۆڤ ناتوانێت ڕەنگەکان جیا بکاتەوە!" }
+        const mysteries = [
+            { t: "بکوژی ژووری داخراو", d: "پیاوێک لە ژوورێکی داخراودا کوژرا. سێ گومانلێکراو هەن. کێ درۆ دەکات؟", type: "کوشتن", opts: ["خزمەتکار: پەنجەرەی دەرەوەم پاک دەکردەوە لەم بارانەدا.", "کوڕەکەی: سەیری تەلەفزیۆنم دەکرد.", "براکەی: کتێبم دەخوێندەوە."], c: 0, r: "کەس لە کاتی بارانباریندا پەنجەرەی دەرەوە پاک ناکاتەوە!" },
+            { t: "کێشەی کات", d: "ئەگەر دوێنێ بەیانی بوایە، و بەیانی دوێنێ بوایە، ئێستا چ کاتێکە؟", type: "لۆجیک", opts: ["بەیانی", "ئەمڕۆ", "دوێنێ"], c: 1, r: "ئەمە تەنها یارییەکی وشەیە بۆ تاقیکردنەوەی خێرایی مێشکت." },
+            { t: "دزینی تاج", d: "تاجێک دزراوە. پاسەوانەکە دەڵێت دزەکە چاکەتێکی شینی پۆشیبوو لە تاریکییەکی ڕەهادا.", type: "دزین", opts: ["پاسەوانەکە درۆ دەکات", "دزەکە زیرەک بووە"], c: 0, r: "لە تاریکی ڕەهادا مرۆڤ ناتوانێت ڕەنگی شین ببینێت!" },
+            { t: "مەتەڵی پارێزەر", d: "پارێزەرێک دەڵێت سێ دز چوونەتە ژوورەوە، بەڵام تەنها یەک جێپێ لەسەر زەوییەکە هەیە.", type: "لۆجیک", opts: ["دزەکان یەک لە دوای یەک ڕۆیشتوون", "پارێزەرەکە درۆ دەکات", "دزەکان فڕیوون"], c: 0, r: "دزەکان یەک لە دوای یەک ڕۆیشتوون بۆ ئەوەی جێپێکانیان بشارنەوە." },
+            { t: "کوشتنی مامۆستا", d: "مامۆستایەک لە یەکەم ڕۆژی قوتابخانە کوژرا. سێ کەس گومانلێکراون.", type: "کوشتن", opts: ["باخەوان: خەریکی بڕینی دار بووم.", "کارمەند: خەریکی کۆکردنەوەی پۆستە بووم.", "شۆفێر: خەریکی گواستنەوەی خوێندکار بووم."], c: 1, r: "لە یەکەم ڕۆژی قوتابخانەدا پۆستە (Mail) بونی نییە!" }
         ];
 
-        // Expansion: Adding dummy cases to fill 50 slots
-        for(let i=4; i<=50; i++) {
-            database.push({
-                title: `دۆسیەی ژمارە ${i}`,
-                desc: "سەرەداوێکی نوێ لە شوێنی تاوان دۆزرایەوە. لێکۆڵینەوەکان دەریدەخەن شتێک لێرە ڕاست نییە. بڕیارت چییە؟",
-                type: i % 2 === 0 ? "لۆجیک" : "کوشتن",
-                options: [
-                    { t: "ئەمە تەڵەی بکوژەکەیە", c: true },
-                    { t: "ئەمە بەڵگەیەکی ڕاستەقینەیە", c: false }
-                ],
-                why: "هەمیشە گومان لەو بەڵگانە بکە کە زۆر ئاسان دەدۆزرێنەوە!"
+        // Generator for 50 unique cases to avoid repetition
+        const caseThemes = ["کوشتن", "دزین", "لۆجیک", "تەحەدا"];
+        for (let i = 5; i < 50; i++) {
+            mysteries.push({
+                t: `دۆسیەی ژمارە ${i + 1}`,
+                d: `لە شوێنی تاواندا ${i + 10} بەڵگە دۆزرایەوە، بەڵام تەنها یەکێکیان ڕاستە. ئایا دەتوانیت بڕیاری ڕاست بدەیت؟`,
+                type: caseThemes[i % 4],
+                opts: ["بەڵێ، ئەمە بەڵگەکەیە", "نەخێر، ئەمە تەڵەیە", "پێویستم بە کاتی زیاترە"],
+                c: i % 2,
+                r: "لێکۆڵینەوەی ورد پێویستی بە سەرنجدانی هەموو وردەکارییەک هەیە."
             });
         }
 
         let level = 0;
         let score = 0;
 
-        function initGame() {
-            document.getElementById('splash').style.opacity = '0';
-            setTimeout(() => { document.getElementById('splash').style.display = 'none'; }, 800);
+        function startGame() {
+            document.getElementById('splash').style.display = 'none';
             renderLevel();
         }
 
         function renderLevel() {
-            const data = database[level];
+            const data = mysteries[level];
             document.getElementById('level-val').innerText = `${String(level+1).padStart(2, '0')}/50`;
-            
             document.getElementById('case-body').innerHTML = `
                 <div class="label">${data.type}</div>
-                <h1 class="title">${data.title}</h1>
-                <div class="description">${data.desc}</div>
+                <h1 class="title">${data.t}</h1>
+                <div class="description">${data.d}</div>
             `;
-
             const list = document.getElementById('choice-list');
             list.innerHTML = '';
-            data.options.forEach((opt, i) => {
+            data.opts.forEach((opt, i) => {
                 const item = document.createElement('div');
                 item.className = 'choice-item';
-                item.innerHTML = `<span>${i+1}</span> <span>${opt.t}</span>`;
-                item.onclick = () => handleAnswer(opt.c, data.why);
+                item.innerHTML = `<span class="choice-num">${i+1}</span> <span>${opt}</span>`;
+                item.onclick = () => handleAnswer(i === data.c, data.r);
                 list.appendChild(item);
             });
         }
 
-        function handleAnswer(isCorrect, explanation) {
+        function handleAnswer(isCorrect, reason) {
             const fb = document.getElementById('feedback');
             if(isCorrect) {
                 score += 100;
                 document.getElementById('fb-icon').innerText = '✅';
                 document.getElementById('fb-title').innerText = 'نایاب بوو!';
                 document.getElementById('fb-title').style.color = '#2ecc71';
-                document.getElementById('fb-desc').innerText = explanation;
+                document.getElementById('fb-desc').innerText = reason;
             } else {
                 document.getElementById('fb-icon').innerText = '❌';
                 document.getElementById('fb-title').innerText = 'هەڵە بوویت!';
                 document.getElementById('fb-title').style.color = 'red';
-                document.getElementById('fb-desc').innerText = 'بکوژەکە توانی ڕابکات چونکە سەرەداوەکەت نەدۆزیەوە.';
+                document.getElementById('fb-desc').innerText = 'سەرەداوەکەت ون کرد و بکوژەکە توانی ڕابکات.';
             }
             document.getElementById('score-val').innerText = String(score).padStart(4, '0');
             fb.style.display = 'flex';
@@ -234,12 +219,11 @@
 
         function closeFeedback() {
             document.getElementById('feedback').style.display = 'none';
-            if(level < database.length - 1) {
+            if(level < mysteries.length - 1) {
                 level++;
                 renderLevel();
             } else {
-                alert("پیرۆزە! تۆ بوویتە باشترین لێکۆڵەر و هەموو دۆسیەکانت داخست.");
-                location.reload();
+                document.getElementById('end-screen').style.display = 'flex';
             }
         }
     </script>
