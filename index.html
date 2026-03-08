@@ -3,298 +3,242 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>لێکۆڵەر PRO</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;500;800&family=Orbitron:wght@500&display=swap" rel="stylesheet">
+    <title>لێکۆڵەر: چاپی کۆتایی</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700;900&family=Orbitron:wght@600&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --blood: #e50914;
-            --gold: #ffc107;
-            --bg: #050505;
-            --card: #121212;
-            --border: #222;
+            --blood: #ff0000;
+            --dark-overlay: rgba(0, 0, 0, 0.75);
+            --gold: #ffcc00;
+            --glass: rgba(255, 255, 255, 0.05);
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body, html { 
-            margin: 0; padding: 0; 
-            width: 100%; height: 100%; 
-            background: var(--bg); 
-            color: #fff; 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            background: #000; color: #fff; 
             font-family: 'Noto Sans Arabic', sans-serif;
-            overflow: hidden; /* Fixes the scrolling issue */
+            overflow: hidden; 
         }
 
-        /* Top Header UI */
-        .app-header {
-            height: 60px;
-            background: #000;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-            border-bottom: 2px solid var(--blood);
-            box-shadow: 0 0 15px rgba(229, 9, 20, 0.4);
-            position: relative;
-            z-index: 10;
+        /* --- VIDEO BACKGROUND ENGINE --- */
+        #video-bg {
+            position: fixed; right: 0; bottom: 0;
+            min-width: 100%; min-height: 100%;
+            z-index: -1; filter: grayscale(100%) brightness(40%);
+            object-fit: cover;
         }
 
-        .stat-box { display: flex; flex-direction: column; align-items: center; }
-        .stat-val { font-family: 'Orbitron', sans-serif; color: var(--gold); font-size: 1.1rem; }
-        .stat-lab { font-size: 0.7rem; color: #888; text-transform: uppercase; }
-
-        /* Main Game Viewport */
-        main {
-            height: calc(100% - 60px);
-            display: flex;
-            flex-direction: column;
-            padding: 15px;
-            justify-content: space-between;
+        .overlay {
+            position: fixed; inset: 0;
+            background: radial-gradient(circle, transparent 20%, #000 100%);
+            z-index: 0; pointer-events: none;
         }
 
-        #case-display {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+        /* --- HEADER & NAVIGATION --- */
+        header {
+            height: 70px; display: flex; justify-content: space-between; 
+            align-items: center; padding: 0 25px;
+            border-bottom: 3px solid var(--blood);
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
+            position: relative; z-index: 10;
         }
 
-        .case-type { 
-            color: var(--blood); 
-            font-weight: 800; 
-            font-size: 0.9rem; 
-            letter-spacing: 2px;
-            margin-bottom: 5px;
-        }
+        .stat-group { display: flex; flex-direction: column; align-items: center; }
+        .stat-num { font-family: 'Orbitron', sans-serif; color: var(--gold); font-size: 1.2rem; }
+        .stat-txt { font-size: 0.7rem; color: #888; letter-spacing: 1px; }
 
-        .case-title { 
-            font-size: 1.6rem; 
-            margin: 0 0 10px 0; 
-            color: #fff;
-            line-height: 1.2;
-        }
-
-        .case-desc { 
-            font-size: 1rem; 
-            color: #bbb; 
-            line-height: 1.5;
-            margin-bottom: 15px;
-            background: rgba(255,255,255,0.03);
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        /* Choice Grid - Auto Sizing */
-        .choices-area {
-            display: grid;
-            gap: 10px;
-            max-height: 50%;
-        }
-
-        .choice-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            padding: 12px 15px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            position: relative;
-        }
-
-        .choice-card:active { transform: scale(0.97); background: #1a1a1a; }
-        .choice-card.correct { border-color: #2ecc71; background: rgba(46, 204, 113, 0.1); }
-        .choice-card.wrong { border-color: var(--blood); background: rgba(229, 9, 20, 0.1); }
-
-        .btn-tag {
-            font-size: 0.6rem;
-            background: var(--blood);
-            padding: 2px 6px;
-            border-radius: 3px;
-            position: absolute;
-            top: -8px;
-            right: 15px;
-            font-weight: bold;
-        }
-
-        /* Overlay */
-        #feedback {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.95);
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            padding: 30px;
-            text-align: center;
-        }
-
-        .btn-next {
-            margin-top: 30px;
-            background: var(--blood);
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border-radius: 50px;
-            cursor: pointer;
-        }
-
-        /* Splash Screen */
+        /* --- SPLASH SCREEN (FIXED START BUTTON) --- */
         #splash {
-            position: fixed;
-            inset: 0;
-            background: #000;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            position: fixed; inset: 0; z-index: 1000;
+            background: #000; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+            transition: opacity 0.8s ease;
         }
+
+        .logo-text { font-size: 5rem; color: var(--blood); font-weight: 900; margin: 0; text-shadow: 0 0 30px var(--blood); }
+        
+        .btn-start {
+            margin-top: 40px; background: var(--blood); color: #fff;
+            border: none; padding: 20px 60px; font-size: 1.5rem;
+            font-weight: 900; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 0 20px var(--blood); transition: 0.3s;
+            z-index: 1001; position: relative;
+        }
+        .btn-start:active { transform: scale(0.9); box-shadow: 0 0 5px var(--blood); }
+
+        /* --- MAIN CONTENT AREA --- */
+        main {
+            height: calc(100% - 70px); position: relative; z-index: 5;
+            display: flex; flex-direction: column; padding: 20px;
+            justify-content: space-between;
+        }
+
+        .case-card {
+            flex-grow: 1; display: flex; flex-direction: column; justify-content: center;
+        }
+
+        .label { color: var(--blood); font-weight: 900; font-size: 0.8rem; margin-bottom: 10px; }
+        .title { font-size: 2.2rem; margin: 0 0 15px 0; line-height: 1.1; }
+        .description { font-size: 1.1rem; color: #ddd; line-height: 1.6; background: var(--glass); padding: 20px; border-radius: 15px; border-right: 4px solid var(--blood); }
+
+        /* --- CHOICES (UI GRID) --- */
+        .choices-container { display: grid; gap: 12px; margin-top: 20px; }
+        
+        .choice-item {
+            background: rgba(20, 20, 20, 0.8); border: 1px solid #333;
+            padding: 18px; border-radius: 12px; cursor: pointer;
+            display: flex; align-items: center; gap: 15px;
+            transition: 0.2s; position: relative; overflow: hidden;
+        }
+        .choice-item:active { background: #333; }
+        .choice-item span:first-child { color: var(--gold); font-family: 'Orbitron'; font-weight: bold; font-size: 1.2rem; }
+
+        /* --- FEEDBACK SYSTEM --- */
+        #feedback {
+            position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,0.95);
+            display: none; flex-direction: column; justify-content: center; 
+            align-items: center; padding: 40px; text-align: center;
+        }
+        .fb-icon { font-size: 5rem; margin-bottom: 20px; }
+
+        /* Animations */
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+        .live-indicator { width: 10px; height: 10px; background: red; border-radius: 50%; display: inline-block; margin-left: 8px; animation: pulse 1s infinite; }
     </style>
 </head>
 <body>
 
+    <video autoplay muted loop id="video-bg">
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-searching-a-crime-scene-with-a-flashlight-4444-large.mp4" type="video/mp4">
+    </video>
+    <div class="overlay"></div>
+
     <div id="splash">
-        <h1 style="color:var(--blood); font-size: 3rem; margin:0;">لێکۆڵەر</h1>
-        <p style="color:var(--gold);">ئامادەی بۆ ڕاستی؟</p>
-        <button class="btn-next" onclick="startGame()">دەستپێکردن</button>
+        <h1 class="logo-text">لێکۆڵەر</h1>
+        <p style="color:var(--gold); font-size: 1.2rem;">تۆ ئامادەیت بۆ ڕووبەڕووبوونەوەی تاریکی؟</p>
+        <button class="btn-start" onclick="initGame()">دەستپێکردن</button>
     </div>
 
-    <header class="app-header">
-        <div class="stat-box">
-            <span class="stat-lab">نمرە</span>
-            <span id="score-val" class="stat-val">000</span>
+    <header>
+        <div class="stat-group">
+            <span class="stat-txt">نمرەی ئێستا</span>
+            <span id="score-val" class="stat-num">0000</span>
         </div>
-        <div style="color:var(--blood); font-weight:900;">INVESTIGATOR</div>
-        <div class="stat-box">
-            <span class="stat-lab">قۆناغ</span>
-            <span id="level-val" class="stat-val">01/30</span>
+        <div style="font-weight: 900; letter-spacing: 2px;">
+            CRIME <span class="live-indicator"></span> SCENE
+        </div>
+        <div class="stat-group">
+            <span class="stat-txt">قۆناغ</span>
+            <span id="level-val" class="stat-num">01/50</span>
         </div>
     </header>
 
     <main>
-        <div id="case-display">
+        <div class="case-card" id="case-body">
             </div>
-        
-        <div class="choices-area" id="choices-grid">
+
+        <div class="choices-container" id="choice-list">
             </div>
     </main>
 
     <div id="feedback">
-        <h1 id="fb-title"></h1>
-        <p id="fb-text" style="color:#aaa; line-height:1.6;"></p>
-        <button class="btn-next" onclick="nextLevel()">بەردەوام بوون</button>
+        <div id="fb-icon" class="fb-icon"></div>
+        <h2 id="fb-title" style="font-size: 2.5rem; margin: 0;"></h2>
+        <p id="fb-desc" style="color: #aaa; font-size: 1.2rem; margin: 20px 0;"></p>
+        <button class="btn-start" onclick="closeFeedback()">بەردەوام بە</button>
     </div>
 
     <script>
-        const cases = [
-            { type: "تاوان", title: "مەتەڵی ژووری داخراو", desc: "بازرگانێک لە ژوورێکی داخراودا کوژرا. سێ کەس لە ماڵەکەدا بوون. کامەیان درۆ دەکات؟", options: [
-                { text: "خزمەتکار: من پەنجەرەکانم پاک دەکردەوە لە کاتی بارانەکەدا.", correct: true },
-                { text: "کوڕەکەی: من سەیری فیلمم دەکرد.", correct: false },
-                { text: "براکەی: من لە ژووری نانخواردن بووم.", correct: false }
+        const database = [
+            { title: "بکوژی ژووری داخراو", desc: "پیاوێک لە ژوورێکی داخراودا کوژرا. سێ گومانلێکراو هەن. کامەیان درۆ دەکات؟", type: "کوشتن", options: [
+                { t: "خزمەتکار: خەریکی پاککردنەوەی پەنجەرەی دەرەوە بووم لەم بارانەدا.", c: true },
+                { t: "کوڕەکەی: من لە هۆڵەکەدا سەیری تەلەفزیۆنم دەکرد.", c: false },
+                { t: "براکەی: من لە ژووری نانخواردن خەریکی کتێب خوێندنەوە بووم.", c: false }
             ], why: "کەس لە کاتی بارانباریندا پەنجەرەی دەرەوە پاک ناکاتەوە!" },
-            { type: "تەحەدا", title: "کێشەی کات", desc: "ئەگەر دوێنێ بەیانی بێت، و بەیانی دوێنێ بێت، ئێستا چ کاتێکە؟", options: [
-                { text: "ئەمڕۆ", correct: true },
-                { text: "دوێنێ", correct: false },
-                { text: "بەیانی", correct: false }
-            ], why: "ئەمە تەنها یارییەکی وشەیە بۆ تاقیکردنەوەی خێرایی مێشکت!" },
-            { type: "دزین", title: "تاجی ونبوو", desc: "تاجێک لە مۆزەخانە دزرا. پاسەوانەکە دەڵێت دزەکە چاکەتێکی سەوزی پۆشیبوو لە تاریکییەکی ڕەهادا.", options: [
-                { text: "پاسەوانەکە درۆ دەکات", correct: true },
-                { text: "بەڕێوبەرەکە درۆ دەکات", correct: false }
-            ], why: "لە تاریکی ڕەهادا ناتوانیت ڕەنگی سەوز لە ڕەنگەکانی تر جیا بکەیتەوە!" }
-            // Logic repeats for 30 cases... (I have added simplified placeholders to keep code runnable, you can add text easily)
+            { title: "کێشەی کات", desc: "ئەگەر دوێنێ بەیانی بوایە، و بەیانی دوێنێ بوایە، ئێستا چ کاتێکە؟", type: "تەحەدای زیرەکی", options: [
+                { t: "ئەمڕۆ", c: true },
+                { t: "بەیانی", c: false },
+                { t: "دوێنێ", c: false }
+            ], why: "ئەمە مەتەڵێکی لۆجیکییە، تەنها وردبوونەوەی دەوێت!" },
+            { title: "دزینی تاجی شاهانە", desc: "تاجێک دزراوە. پاسەوانەکە دەڵێت دزەکە چاکەتێکی شینی پۆشیبوو لە تاریکییەکی ڕەها و بێ گڵۆپدا.", type: "دزین", options: [
+                { t: "پاسەوانەکە درۆ دەکات", c: true },
+                { t: "دزەکە زۆر زیرەک بووە", c: false }
+            ], why: "لە تاریکی ڕەها و بێ ڕووناکیدا، مرۆڤ ناتوانێت ڕەنگەکان جیا بکاتەوە!" }
         ];
 
-        // Fill remaining cases dynamically for the logic
-        for(let i=4; i<=30; i++) {
-            cases.push({
-                type: i % 2 === 0 ? "بەڵگە" : "تاوان",
-                title: `کەیسی ژمارە ${i}`,
-                desc: "سەرەداوێکی نوێ دۆزراوەتەوە. ئایا دەتوانیت بڕیاری ڕاست بدەیت لەم بارودۆخەدا؟",
+        // Expansion: Adding dummy cases to fill 50 slots
+        for(let i=4; i<=50; i++) {
+            database.push({
+                title: `دۆسیەی ژمارە ${i}`,
+                desc: "سەرەداوێکی نوێ لە شوێنی تاوان دۆزرایەوە. لێکۆڵینەوەکان دەریدەخەن شتێک لێرە ڕاست نییە. بڕیارت چییە؟",
+                type: i % 2 === 0 ? "لۆجیک" : "کوشتن",
                 options: [
-                    { text: "بەڵێ، ئەمە بەڵگەیە", correct: true },
-                    { text: "نەخێر، ئەمە تەڵەیە", correct: false }
+                    { t: "ئەمە تەڵەی بکوژەکەیە", c: true },
+                    { t: "ئەمە بەڵگەیەکی ڕاستەقینەیە", c: false }
                 ],
-                why: "لێکۆڵینەوەی زیرەکانە پێویستی بە وردبینی هەیە."
+                why: "هەمیشە گومان لەو بەڵگانە بکە کە زۆر ئاسان دەدۆزرێنەوە!"
             });
         }
 
-        let currentLevel = 0;
+        let level = 0;
         let score = 0;
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-        function playSound(freq, type) {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = type;
-            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+        function initGame() {
+            document.getElementById('splash').style.opacity = '0';
+            setTimeout(() => { document.getElementById('splash').style.display = 'none'; }, 800);
+            renderLevel();
         }
 
-        function startGame() {
-            document.getElementById('splash').style.display = 'none';
-            renderCase();
-        }
-
-        function renderCase() {
-            const c = cases[currentLevel];
-            document.getElementById('level-val').innerText = `${String(currentLevel+1).padStart(2, '0')}/30`;
+        function renderLevel() {
+            const data = database[level];
+            document.getElementById('level-val').innerText = `${String(level+1).padStart(2, '0')}/50`;
             
-            document.getElementById('case-display').innerHTML = `
-                <div class="case-type">${c.type}</div>
-                <h1 class="case-title">${c.title}</h1>
-                <p class="case-desc">${c.desc}</p>
+            document.getElementById('case-body').innerHTML = `
+                <div class="label">${data.type}</div>
+                <h1 class="title">${data.title}</h1>
+                <div class="description">${data.desc}</div>
             `;
 
-            const grid = document.getElementById('choices-grid');
-            grid.innerHTML = '';
-            c.options.forEach((opt, idx) => {
-                const div = document.createElement('div');
-                div.className = 'choice-card';
-                div.innerHTML = `<span style="color:var(--gold); font-weight:bold;">${idx+1}.</span> <span>${opt.text}</span>`;
-                div.onclick = () => checkAnswer(opt.correct, c.why);
-                grid.appendChild(div);
+            const list = document.getElementById('choice-list');
+            list.innerHTML = '';
+            data.options.forEach((opt, i) => {
+                const item = document.createElement('div');
+                item.className = 'choice-item';
+                item.innerHTML = `<span>${i+1}</span> <span>${opt.t}</span>`;
+                item.onclick = () => handleAnswer(opt.c, data.why);
+                list.appendChild(item);
             });
         }
 
-        function checkAnswer(isCorrect, reason) {
+        function handleAnswer(isCorrect, explanation) {
             const fb = document.getElementById('feedback');
-            const title = document.getElementById('fb-title');
-            const text = document.getElementById('fb-text');
-
             if(isCorrect) {
-                playSound(800, 'sine');
                 score += 100;
-                title.innerText = "سەرکەوتوو بوویت!";
-                title.style.color = "#2ecc71";
-                text.innerText = reason;
+                document.getElementById('fb-icon').innerText = '✅';
+                document.getElementById('fb-title').innerText = 'نایاب بوو!';
+                document.getElementById('fb-title').style.color = '#2ecc71';
+                document.getElementById('fb-desc').innerText = explanation;
             } else {
-                playSound(200, 'sawtooth');
-                title.innerText = "هەڵە بوویت!";
-                title.style.color = var(--blood);
-                text.innerText = "بکوژەکە توانی ڕابکات چونکە تۆ ورد نەبوویت.";
+                document.getElementById('fb-icon').innerText = '❌';
+                document.getElementById('fb-title').innerText = 'هەڵە بوویت!';
+                document.getElementById('fb-title').style.color = 'red';
+                document.getElementById('fb-desc').innerText = 'بکوژەکە توانی ڕابکات چونکە سەرەداوەکەت نەدۆزیەوە.';
             }
-
-            document.getElementById('score-val').innerText = String(score).padStart(3, '0');
+            document.getElementById('score-val').innerText = String(score).padStart(4, '0');
             fb.style.display = 'flex';
         }
 
-        function nextLevel() {
+        function closeFeedback() {
             document.getElementById('feedback').style.display = 'none';
-            if(currentLevel < cases.length - 1) {
-                currentLevel++;
-                renderCase();
+            if(level < database.length - 1) {
+                level++;
+                renderLevel();
             } else {
-                alert("پیرۆزە! تۆ هەموو کەیسەکانت چارەسەر کرد.");
+                alert("پیرۆزە! تۆ بوویتە باشترین لێکۆڵەر و هەموو دۆسیەکانت داخست.");
                 location.reload();
             }
         }
