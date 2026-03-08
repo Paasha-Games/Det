@@ -3,179 +3,273 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دۆزینەوەی بکوژەکە | یاری لێکۆڵینەوە</title>
+    <title>لێکۆڵەر: دۆزینەوەی بکوژەکە</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --blood-red: #8b0000;
-            --dark-bg: #0a0a0a;
-            --text-gray: #cccccc;
-            --accent-gold: #c5a059;
+            --blood: #b20710;
+            --dark: #0f0f0f;
+            --card: #1e1e1e;
+            --gold: #d4af37;
+            --text: #e0e0e0;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Noto Sans Arabic', sans-serif;
         }
 
         body {
-            background-color: var(--dark-bg);
-            color: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--dark);
+            color: var(--text);
             margin: 0;
             padding: 0;
-            line-height: 1.6;
+            overflow-x: hidden;
         }
 
+        /* Hero Section */
         header {
-            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1505664194779-8beaceb93744?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            height: 80vh;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), 
+                        url('https://images.unsplash.com/photo-1585314062340-f1a5a7c9328d?auto=format&fit=crop&q=80');
             background-size: cover;
-            height: 60vh;
+            background-position: center;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            border-bottom: 3px solid var(--blood-red);
+            border-bottom: 5px solid var(--blood);
         }
 
-        h1 {
-            font-size: 3.5rem;
-            margin-bottom: 10px;
-            color: var(--blood-red);
-            text-shadow: 2px 2px 4px #000;
-        }
+        h1 { font-size: 4rem; color: var(--blood); margin: 0; text-shadow: 0 0 20px rgba(178, 7, 16, 0.5); }
+        .subtitle { font-size: 1.2rem; color: var(--gold); margin-top: 10px; letter-spacing: 1px; }
 
-        .tagline {
-            font-size: 1.5rem;
-            color: var(--accent-gold);
-        }
-
+        /* Game Container */
         .container {
-            max-width: 1000px;
-            margin: auto;
-            padding: 40px 20px;
-        }
-
-        section {
-            margin-bottom: 60px;
-        }
-
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .card {
-            background: #1a1a1a;
+            max-width: 900px;
+            margin: -50px auto 50px;
             padding: 20px;
-            border-left: 4px solid var(--blood-red);
-            transition: transform 0.3s;
         }
 
-        .card:hover {
-            transform: translateY(-5px);
-            background: #222;
+        .game-box {
+            background: var(--card);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid #333;
         }
 
-        h2 {
-            border-bottom: 2px solid var(--blood-red);
-            display: inline-block;
-            padding-bottom: 5px;
+        /* Stats Bar */
+        .stats {
+            display: flex;
+            justify-content: space-between;
             margin-bottom: 30px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+            color: var(--gold);
         }
 
-        .btn {
-            background-color: var(--blood-red);
+        /* Content Areas */
+        .case-title { color: var(--blood); font-size: 1.8rem; margin-bottom: 15px; }
+        .case-desc { font-size: 1.1rem; line-height: 1.8; margin-bottom: 30px; }
+
+        .suspects-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .suspect-btn {
+            background: #2a2a2a;
+            border: 1px solid #444;
             color: white;
-            padding: 15px 40px;
-            text-decoration: none;
-            font-weight: bold;
+            padding: 20px;
+            text-align: right;
+            cursor: pointer;
             border-radius: 5px;
-            display: inline-block;
+            transition: 0.3s;
+            font-size: 1.1rem;
+        }
+
+        .suspect-btn:hover {
+            background: #3a3a3a;
+            border-color: var(--gold);
+            transform: scale(1.02);
+        }
+
+        .suspect-btn strong { color: var(--gold); }
+
+        /* Results Display */
+        #result-screen {
+            display: none;
+            text-align: center;
+            padding: 30px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+
+        .success { background: rgba(0, 128, 0, 0.2); border: 1px solid green; }
+        .fail { background: rgba(178, 7, 16, 0.2); border: 1px solid var(--blood); }
+
+        .btn-main {
+            background: var(--blood);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border-radius: 5px;
             margin-top: 20px;
             transition: 0.3s;
         }
 
-        .btn:hover {
-            background-color: #ff0000;
-            box-shadow: 0 0 15px var(--blood-red);
-        }
+        .btn-main:hover { background: #ff0000; box-shadow: 0 0 20px var(--blood); }
 
-        .suspect-list {
-            list-style: none;
-            padding: 0;
-        }
+        footer { text-align: center; padding: 50px; color: #666; font-size: 0.9rem; }
 
-        .suspect-list li {
-            background: #111;
-            margin: 10px 0;
-            padding: 15px;
-            border: 1px solid #333;
-        }
-
-        footer {
-            text-align: center;
-            padding: 40px;
-            background: #000;
-            color: var(--text-gray);
-            font-size: 0.9rem;
-        }
-
-        .evidence-box {
-            border: 2px dashed var(--accent-gold);
-            padding: 20px;
-            text-align: center;
-            background: rgba(197, 160, 89, 0.05);
-        }
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .fade { animation: fadeIn 0.8s ease; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>کێ بکوژەکەیە؟</h1>
-        <p class="tagline">شارەزاییەکانت بەکاربهێنە بۆ دۆزینەوەی ڕاستی لە پشت پەردەی تاوانەکان</p>
-        <a href="#play" class="btn">دەستپێکردنی یاری</a>
+        <h1 class="fade">لێکۆڵەر</h1>
+        <p class="subtitle fade">نهێنییەکان بدۆزەوە، تاوانبار دەستگیر بکە</p>
+        <button class="btn-main" onclick="scrollToGame()">دەستپێکردنی لێکۆڵینەوە</button>
     </header>
 
-    <div class="container">
-        
-        <section id="about">
-            <h2>دەربارەی یارییەکە</h2>
-            <p>بەخێربێیت بۆ جیهانی لێکۆڵینەوە و نهێنییەکان. لێرە تۆ تەنها یاریزان نیت، تۆ لێکۆڵەرێکی لێهاتووی کە دەبێت لە نێوان درۆ و ڕاستییەکاندا، بکوژە ڕاستەقینەکە بدۆزیتەوە پێش ئەوەی جارێکی تر هێرش بکاتەوە.</p>
-        </section>
+    <div class="container" id="game-section">
+        <div class="game-box">
+            <div class="stats">
+                <span>نمرە: <span id="score">0</span></span>
+                <span>دۆسیەی چالاک: <span id="case-num">1</span></span>
+            </div>
 
-        <section class="feature-grid">
-            <div class="card">
-                <h3>🔍 لێکۆڵینەوە لە شوێنی تاوان</h3>
-                <p>هەموو وردەکارییەک گرنگە. بەدوای بەڵگە شاراوەکاندا بگەڕێ و سەرەداوەکان کۆبکەرەوە.</p>
-            </div>
-            <div class="card">
-                <h3>🗣️ لێپرسینەوە لە گومانلێکراوان</h3>
-                <p>گوێ لە وتەی شایەتحاڵەکان بگرە. کێ ڕاست دەکات و کێ درۆ؟ هەموویان شتێکیان هەیە بۆ شاردنەوە.</p>
-            </div>
-            <div class="card">
-                <h3>⚖️ بڕیاری کۆتایی</h3>
-                <p>بەڵگەکان ڕیز بکە و بکوژەکە دەستنیشان بکە. ئاگاداربە! بڕیاری هەڵە بێتاوانێک دەخاتە زیندانەوە.</p>
-            </div>
-        </section>
+            <div id="game-content" class="fade">
+                </div>
 
-        <section id="play">
-            <div class="evidence-box">
-                <h2>دۆسیەی ژمارە ٠١: مەتەڵی نیوەشەو</h2>
-                <p>بازرگانێکی دەوڵەمەند لە ژوورەکەی خۆیدا بە مردوویی دۆزرایەوە. دەرگاکە لە ناوەوە داخرابوو...</p>
-                
-                <ul class="suspect-list">
-                    <li><strong>خزمەتکارەکە:</strong> "من خەریکی پاککردنەوەی چێشتخانەکە بووم."</li>
-                    <li><strong>براکەی:</strong> "من لە کتێبخانە خەریکی خوێندنەوە بووم و هیچم نەبیستووە."</li>
-                    <li><strong>هاوڕێکەی:</strong> "من تەنها بۆ سەردان هاتبووم و پێش ڕووداوەکە ڕۆیشتم."</li>
-                </ul>
-                
-                <a href="#" class="btn">پشکنینی بەڵگەکان</a>
+            <div id="result-screen" class="fade">
+                <h2 id="result-title"></h2>
+                <p id="result-text"></p>
+                <button class="btn-main" id="next-btn" onclick="loadNextCase()">دۆسیەی داهاتوو</button>
             </div>
-        </section>
-
+        </div>
     </div>
 
     <footer>
-        <p>© 2026 یاری دۆزینەوەی بکوژ - هەموو مافەکان پارێزراوە</p>
-        <p>دیزاین کراوە بۆ لێکۆڵەرە زیرەکەکان</p>
+        <p>© 2026 یاری لێکۆڵەر | دروستکراوە بۆ لێهاتووەکان</p>
     </footer>
 
+    <script>
+        let currentScore = 0;
+        let currentCaseIndex = 0;
+
+        const cases = [
+            {
+                title: "مەتەڵی ژووری داخراو",
+                description: "بازرگانێک لە ژوورێکی داخراودا کوژراوە. سێ گومانلێکراو هەن کە هەر یەکێکیان وتەی خۆی هەیە. کامەیان درۆ دەکات؟",
+                suspects: [
+                    { name: "خزمەتکارەکە", alibi: "من خەریکی پاککردنەوەی پەنجەرەکانی دەرەوە بووم لەو کاتەدا (بارانێکی زۆر دەباری).", isKiller: true },
+                    { name: "براکەی", alibi: "من لە هۆڵەکەدا سەیری تەلەفزیۆنم دەکرد.", isKiller: false },
+                    { name: "چێشتلێنەرەکە", alibi: "من سەرقاڵی ئامادەکردنی نانی ئێوارە بووم بۆ میوانەکان.", isKiller: false }
+                ],
+                explanation: "خزمەتکارەکە درۆ دەکات! چونکە کەس لە کاتی بارانباریندا پەنجەرەی دەرەوە پاک ناکاتەوە."
+            },
+            {
+                title: "تاوانی مۆزەخانە",
+                description: "تاجێکی شاهانە دزراوە. پاسەوانەکە دەڵێت کاتژمێر ٢ی شەو دزەکە چووەتە ژوورەوە و بەهۆی تاریکییەوە تەنها چاکەتێکی سووری بینیوە.",
+                suspects: [
+                    { name: "کارمەندی مۆزەخانە", alibi: "من لەو کاتەدا لە ماڵەوە خەوتبووم.", isKiller: false },
+                    { name: "پاسەوانەکە", alibi: "من هەوڵمدا بیگرم بەڵام ئەو زۆر خێرا بوو.", isKiller: true },
+                    { name: "گەشتیارەکە", alibi: "من ناسنامەم ون کردبوو و گەڕامەوە بۆ مۆزەخانەکە.", isKiller: false }
+                ],
+                explanation: "پاسەوانەکە دزەکەیە! چونکە لە تاریکی ڕەها ناتوانێت ڕەنگی سوور بە ڕوونی ببێنێت."
+            }
+        ];
+
+        function scrollToGame() {
+            document.getElementById('game-section').scrollIntoView({ behavior: 'smooth' });
+            loadCase();
+        }
+
+        function loadCase() {
+            const gameContent = document.getElementById('game-content');
+            const resultScreen = document.getElementById('result-screen');
+            const c = cases[currentCaseIndex];
+
+            resultScreen.style.display = 'none';
+            gameContent.style.display = 'block';
+            document.getElementById('case-num').innerText = currentCaseIndex + 1;
+
+            let suspectsHTML = '';
+            c.suspects.forEach((s, index) => {
+                suspectsHTML += `
+                    <div class="suspect-btn" onclick="checkAnswer(${index})">
+                        <strong>${s.name}:</strong> "${s.alibi}"
+                    </div>
+                `;
+            });
+
+            gameContent.innerHTML = `
+                <h2 class="case-title">${c.title}</h2>
+                <p class="case-desc">${c.description}</p>
+                <div class="suspects-grid">
+                    ${suspectsHTML}
+                </div>
+            `;
+        }
+
+        function checkAnswer(index) {
+            const gameContent = document.getElementById('game-content');
+            const resultScreen = document.getElementById('result-screen');
+            const resultTitle = document.getElementById('result-title');
+            const resultText = document.getElementById('result-text');
+            const nextBtn = document.getElementById('next-btn');
+
+            const selected = cases[currentCaseIndex].suspects[index];
+            gameContent.style.display = 'none';
+            resultScreen.style.display = 'block';
+
+            if (selected.isKiller) {
+                currentScore += 100;
+                resultTitle.innerText = "✅ کارێکی نایاب بوو!";
+                resultTitle.style.color = "green";
+                resultText.innerText = cases[currentCaseIndex].explanation;
+                resultScreen.className = "fade success";
+            } else {
+                resultTitle.innerText = "❌ هەڵە بوویت!";
+                resultTitle.style.color = "var(--blood)";
+                resultText.innerText = "بکوژەکە توانی ڕابکات. جارێکی تر هەوڵ بدەرەوە.";
+                resultScreen.className = "fade fail";
+            }
+
+            document.getElementById('score').innerText = currentScore;
+            
+            if (currentCaseIndex === cases.length - 1) {
+                nextBtn.innerText = "دووبارە دەستپێکردنەوە";
+            } else {
+                nextBtn.innerText = "دۆسیەی داهاتوو";
+            }
+        }
+
+        function loadNextCase() {
+            if (currentCaseIndex < cases.length - 1) {
+                currentCaseIndex++;
+                loadCase();
+            } else {
+                currentCaseIndex = 0;
+                currentScore = 0;
+                document.getElementById('score').innerText = 0;
+                loadCase();
+            }
+        }
+
+        // Initialize first case
+        loadCase();
+    </script>
 </body>
 </html>
