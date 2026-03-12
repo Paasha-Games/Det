@@ -9,20 +9,20 @@
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;500;800&display=swap');
         :root { --dark-bg: #050505; --panel-bg: #121214; --accent-red: #990000; --text-gold: #c4a000; }
         body { font-family: 'Noto Sans Arabic', sans-serif; background-color: var(--dark-bg); color: #d1d1d1; margin: 0; overflow-x: hidden; }
-        
-        /* Fog Animation */
-        .fog-container { position: absolute; width: 100%; height: 300px; top: 0; left: 0; z-index: -1; overflow: hidden; opacity: 0.4; pointer-events: none; }
-        .fog-img { position: absolute; width: 200%; height: 100%; background: url('https://www.transparenttextures.com/patterns/fog.png'); animation: fogMove 60s linear infinite; }
-        @keyframes fogMove { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
         /* Profile Section */
-        #user-profile { background: #1a1a1d; padding: 15px; margin: 20px auto; max-width: 560px; border-radius: 12px; border: 1px solid #2d2d30; display: flex; align-items: center; gap: 15px; }
+        #user-profile { background: #1a1a1d; padding: 15px; margin: 20px auto; max-width: 560px; border-radius: 12px; border: 1px solid #2d2d30; display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
         .profile-img { width: 60px; height: 60px; background: #2d2d30; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--text-gold); border: 2px solid var(--accent-red); overflow: hidden; cursor: pointer; position: relative; }
         .profile-img img { width: 100%; height: 100%; object-fit: cover; }
         .profile-img:hover::after { content: '\f030'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; background: rgba(0,0,0,0.5); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: white; }
 
         .rank-tag { background: var(--accent-red); color: white; font-size: 0.7rem; padding: 2px 8px; border-radius: 4px; font-weight: 800; display: inline-flex; align-items: center; gap: 5px; }
         .rank-icon { font-size: 0.8rem; }
+
+        /* Inventory Styling */
+        #inventory-section { width: 100%; border-top: 1px solid #2d2d30; margin-top: 10px; padding-top: 10px; display: flex; gap: 10px; align-items: center; }
+        .inv-slot { width: 35px; height: 35px; background: #0c0c0e; border: 1px solid #333; border-radius: 5px; display: flex; align-items: center; justify-content: center; color: #444; font-size: 0.9rem; transition: 0.3s; }
+        .inv-slot.active { color: var(--text-gold); border-color: var(--text-gold); text-shadow: 0 0 5px var(--text-gold); }
 
         #home-screen { padding: 20px; max-width: 600px; margin: auto; text-align: center; position: relative; }
         .main-title { font-size: 2.2rem; color: var(--accent-red); margin-bottom: 30px; text-shadow: 0 0 10px rgba(153,0,0,0.5); position: relative; z-index: 1; }
@@ -42,7 +42,14 @@
         .header-bar { background: #1a1a1d; padding: 15px; border-bottom: 2px solid var(--accent-red); display: flex; justify-content: space-between; align-items: center; }
         .content-body { padding: 25px; }
         .case-intro { background: rgba(255,255,255,0.03); padding: 20px; border-radius: 8px; border-right: 4px solid var(--text-gold); margin-bottom: 20px; line-height: 1.8; }
-        h2 { color: var(--text-gold); border-right: 4px solid var(--accent-red); padding-right: 10px; margin-top: 35px; }
+        h2 { 
+  color: var(--text-gold); 
+  border-right: 4px solid var(--accent-red); 
+  padding-right: 10px; 
+  margin-top: 35px; 
+  font-size: 1.2rem;
+}
+
         .evidence-img { width: 100%; border-radius: 8px; margin: 15px 0; border: 2px solid #333; filter: sepia(30%); transition: filter 1.5s ease, opacity 1.5s ease; }
         
         .audio-player { background: #1a1a1d; padding: 20px; border-radius: 12px; display: flex; align-items: center; gap: 15px; cursor: pointer; border: 1px dashed #444; }
@@ -54,6 +61,7 @@
         .info-txt { font-size: 0.85rem; color: #a0a0a0; line-height: 1.6; margin-top: 5px; }
 
         .solve-btn { background: var(--accent-red); color: white; border: none; width: 100%; padding: 20px; font-size: 1.3rem; font-weight: 800; cursor: pointer; border-radius: 8px; margin-top: 30px; transition: 0.3s; }
+        .solve-btn:disabled { background: #22c55e; cursor: default; opacity: 0.8; }
         
         /* Lab Button Styling */
         .lab-btn { background: #0f172a; color: #38bdf8; border: 1px solid #38bdf8; width: 100%; padding: 12px; border-radius: 8px; cursor: pointer; margin-top: 10px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; }
@@ -94,11 +102,19 @@
             </div>
         </div>
         <button onclick="toggleAmbiance()" id="music-btn" title="Ambient Music" style="background:none; border:none; color:#c4a000; cursor:pointer; font-size: 1.2rem; margin-left: 10px;">
-            <i class="fas fa-ghost"></i>
+            <i class="fas fa-volume-mute"></i>
         </button>
         <button onclick="resetGame()" title="Reset Progress" style="background:none; border:none; color:#444; cursor:pointer;">
             <i class="fas fa-sync-alt"></i>
         </button>
+
+        <div id="inventory-section">
+            <span style="font-size: 0.75rem; color: #666; font-weight: bold;">کەلوپەل:</span>
+            <div class="inv-slot" id="inv-1" title="کلیل"> <i class="fas fa-key"></i> </div>
+            <div class="inv-slot" id="inv-2" title="شوێنپەنجە"> <i class="fas fa-fingerprint"></i> </div>
+            <div class="inv-slot" id="inv-3" title="فانۆس"> <i class="fas fa-lightbulb"></i> </div>
+            <div class="inv-slot" id="inv-4" title="دەمانچە"> <i class="fas fa-gun"></i> </div>
+        </div>
     </div>
 
     <h1 class="main-title"><i class="fas fa-skull"></i> دۆسیە ترسناکەکان</h1>
@@ -133,12 +149,19 @@
 <audio id="userAudio"></audio>
 <audio id="successSound" src="successful.mp3"></audio>
 <audio id="failSound" src="https://www.myinstants.com/media/sounds/wrong-answer-buzzer.mp3"></audio>
-<audio id="ambianceMusic" loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3"></audio>
+<audio id="ambianceMusic" loop src="main-menu.mp3"></audio>
 
 <script>
     let currentLevel = parseInt(localStorage.getItem('detectiveLevel')) || 1;
     let selectedID = "";
     let isMusicPlaying = false;
+
+    const levelMusic = {
+        1: "case1.mp3",
+        2: "case2.mp3",
+        3: "case3.mp3",
+        4: "case4.mp3"
+    };
 
     document.getElementById('p-name').innerText = localStorage.getItem('detectiveName') || "بەکارهێنەر";
     const savedImg = localStorage.getItem('detectiveImg');
@@ -156,10 +179,20 @@
             isMusicPlaying = true;
         } else {
             music.pause();
-            btn.innerHTML = '<i class="fas fa-ghost"></i>';
+            btn.innerHTML = '<i class="fas fa-volume-mute"></i>';
             isMusicPlaying = false;
         }
     }
+
+    // 3. وەستاندنی مۆسیقا کاتێک تابەکە دیار نامێنێت (لە دەرەوەی تاب)
+    document.addEventListener("visibilitychange", function() {
+        const music = document.getElementById('ambianceMusic');
+        if (document.hidden) {
+            if (isMusicPlaying) music.pause();
+        } else {
+            if (isMusicPlaying) music.play();
+        }
+    });
 
     function contactLab(level) {
         const labBtn = document.getElementById('lab-action-btn');
@@ -167,9 +200,9 @@
         labBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> چاوەڕێی تاقیگە بە...';
         
         let hint = "";
-        if(level === 1) hint = "تاقیگە: پاشماوەی جەستەی قوربانییەکە دەریخست کە پلەی گەرمی جەستەی زۆر نزم بووە، ئەمە واتە پێش دۆزینەوەی بە ماوەیەکی زۆر مردووە.";
+        if(level === 1) hint = "تاقیگە: پاش لێکۆڵینەوە لە جەستەی قوربانییەکە بۆمان دەرکەوت کە پلەی گەرمی جەستەی بەرز بووە، ئەمەش واتە ماوەیەکی زۆر کورت بەر لە دۆزینەوەی مردووە.";
         if(level === 2) hint = "تاقیگە: ئەو چەقۆیانەی بۆ بڕینی تابلۆکان بەکارهاتوون، چەقۆی تایبەتی چێشتخانەی گەورەن کە زۆر تیژن.";
-        if(level === 3) hint = "تاقیگە: خواردنەکانی ناو چێشتخانەکە پاشماوەی لێ لێدراوە کە تەمەنیان تەنها ٢٤ کاتژمێرە، واتە کەسێک لێرە ژیاوە دوای کوشتنەکە.";
+        if(level === 3) hint = "تاقیگە: پاشماوەی خواردنەکانی ناو چێشتخانەکە دەریانخست کە تەمەنیان تەنها ٢٤ کاتژمێرە و شیری فرێشیان تێدابووە، واتە کەسێک لێرە ژیاوە دوای کوشتنەکە.";
         if(level === 4) hint = "تاقیگە: هیچ شوێنەوارێکی ململانێ لەسەر جەستەی ئێلیزا نییە، بەڵام قفڵی دەرگای تانکییەکە تەنها بە کلیلێکی تایبەت لە دەرەوە دادەخرێت.";
 
         setTimeout(() => {
@@ -189,11 +222,19 @@
     function uploadImage(event) {
         const file = event.target.files[0];
         if (file) {
+            if (file.size > 1048576) {
+                alert("ئەم وێنەیە زۆر گەورەیە! تکایە وێنەیەک هەڵبژێرە کە لە 1MB بچووکتر بێت.");
+                return;
+            }
             const reader = new FileReader();
             reader.onload = function(e) {
                 const imgUrl = e.target.result;
-                localStorage.setItem('detectiveImg', imgUrl);
-                document.getElementById('p-img-container').innerHTML = `<img src="${imgUrl}">`;
+                try {
+                    localStorage.setItem('detectiveImg', imgUrl);
+                    document.getElementById('p-img-container').innerHTML = `<img src="${imgUrl}">`;
+                } catch (error) {
+                    alert("نەتوانرا وێنەکە پاشەکەوت بکرێت. ڕەنگە قەبارەکەی هێشتا زۆر بێت.");
+                }
             };
             reader.readAsDataURL(file);
         }
@@ -222,6 +263,9 @@
         for(let i=1; i<currentLevel; i++) {
             let galItem = document.getElementById('gal-' + i);
             if(galItem) galItem.classList.add('unlocked');
+            
+            let invItem = document.getElementById('inv-' + i);
+            if(invItem) invItem.classList.add('active');
         }
     }
 
@@ -250,6 +294,11 @@
     function showHome() {
         document.getElementById('home-screen').style.display = 'block';
         document.getElementById('case-detail').style.display = 'none';
+        
+        const music = document.getElementById('ambianceMusic');
+        music.src = "main-menu.mp3";
+        if(isMusicPlaying) music.play();
+        
         updateLocks();
     }
 
@@ -257,6 +306,13 @@
         if (lvl > currentLevel) return;
         document.getElementById('home-screen').style.display = 'none';
         document.getElementById('case-detail').style.display = 'block';
+        
+        const music = document.getElementById('ambianceMusic');
+        if (levelMusic[lvl] && levelMusic[lvl] !== "") {
+            music.src = levelMusic[lvl];
+            if(isMusicPlaying) music.play();
+        }
+        
         loadLevel(lvl);
     }
 
@@ -275,6 +331,9 @@
         const body = document.getElementById('level-content');
         const title = document.getElementById('case-title-display');
         selectedID = "";
+        
+        // 2. پشکنین بۆ ئەوەی بزانین کەیسەکە پێشتر حەل کراوە یان نا
+        const isCompleted = lvl < currentLevel;
 
         let labHTML = `<button class="lab-btn" id="lab-action-btn" onclick="contactLab(${lvl})"><i class="fas fa-microscope"></i> ناردنی بەڵگەکان بۆ تاقیگە</button>`;
 
@@ -290,13 +349,13 @@
                     <div><strong>وتەی دکتۆر ئاراس پێش کووژرانی کە لەڕێگەی مووبایلەکەیەوە گیراوە</strong><br><small>کلیک بکە بۆ بینین</small></div>
                 </div>
                 <h2>گومانلێکراوەکان</h2>
-                ${createCard('کۆژین', 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg', 'من کاژێر ١١:٠٠ ڕۆیشتم و دکتۆرم جێهێشت. ئەو زۆر باش بوو و تەلەفۆنی بۆ هات. من کۆدم پێیە بەڵام هەرگیز بە شەو ناگەڕێمەوە.')}
-                ${createCard('لینا', 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg', 'من ١١:٣٠ کورتە سەردانێکم کرد بۆ بردنی کلیلەکانم. دکتۆر قاوەیەکی گەرمی بەدەستەوە بوو و زۆر ئاسایی قسەی لەگەڵ کردم.')}
-                ${createCard('ئاری', 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg', 'من ١١:٤٠ چوومە ژوورەوە بۆ پاککردنەوە و دکتۆرم بە مردووی بینی. کاتێک دەستم لێدا جەستەی زۆر سارد ببووەوە وەک ئەوەی چەند سەعاتێک بێت مردبێت.')}
+                ${createCard('کۆژین', 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg', 'من کاژێر ١١:٠٠ ڕۆیشتم و دکتۆرم جێهێشت. ئەو زۆر باش بوو و تەلەفۆنی بۆ هات. من کۆدم پێیە بەڵام هەرگیز بە شەو ناگەڕێمەوە.', isCompleted)}
+                ${createCard('لینا', 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg', 'من ١١:٣٠ کورتە سەردانێکم کرد بۆ بردنی کلیلەکانم. دکتۆر قاوەیەکی گەرمی بەدەستەوە بوو و زۆر ئاسایی قسەی لەگەڵ کردم.', isCompleted)}
+                ${createCard('ئاری', 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg', 'من ١١:٤٠ چوومە ژوورەوە بۆ پاککردنەوە و دکتۆرم بە مردووی بینی. کاتێک دەستم لێدا جەستەی زۆر سارد ببووەوە وەک ئەوەی چەند سەعاتێک بێت مردبێت.', isCompleted)}
                 <h2>شایەتحاڵەکان</h2>
                 ${createWitness('پاسەوان', 'من ١١:٣٥ ئاریم بینی بە شڵەژاوی چوو بۆ ژووری دکتۆر.')}
                 ${createWitness('تەکنیکار', 'من لە ڕێڕەوەکە بووم،لەو کاتانەدا گوێم لە دەنگی داخستنی دەرگاکە بوو بەڵام نەمزانی لەلایەن کێوەبوو.')}
-                <button class="solve-btn" id="solve-trigger" onclick="checkAnswer(1, 'ئاری')">پێشکەشکردنی ئەنجام</button>
+                <button class="solve-btn" id="solve-trigger" onclick="checkAnswer(1, 'ئاری')" ${isCompleted ? 'disabled' : ''}>${isCompleted ? '✅ ئەم کەیسە چارەسەر کراوە' : 'پێشکەشکردنی ئەنجام'}</button>
             `;
         } 
         else if (lvl === 2) {
@@ -311,13 +370,13 @@
                     <div><strong>museum_rec.mp3</strong><br><small>کلیک بکە بۆ بینین</small></div>
                 </div>
                 <h2>گومانلێکراوەکان</h2>
-                ${createCard('ڕیچارد', 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg', 'من پاسەوان بووم، ئەوان منیان بەستەوە. من نەمتوانی هیچ بکەم چونکە چەکیان پێ بوو (وەک خۆی دەڵێت).')}
-                ${createCard('تۆماس', 'https://images.pexels.com/photos/91227/pexels-photo-91227.jpeg', 'من چێشتلێنەرم لەوێ، ئەو شەوە جانتایەکی گەورە چەقۆم بردەوە بۆ ماڵەوە بۆ چاککردنەوە، پەیوەندیم بە دزییەکەوە نییە.')}
-                ${createCard('جاک', 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg', 'من پۆلیسی بەردەم مۆزەخانەکە بووم، بەڵام ئەو شەوە لە ماڵەوە بووم و خەوتبووم.')}
+                ${createCard('ڕیچارد', 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg', 'من پاسەوان بووم، ئەوان منیان بەستەوە. من نەمتوانی هیچ بکەم چونکە چەکیان پێ بوو (وەک خۆی دەڵێت).', isCompleted)}
+                ${createCard('تۆماس', 'https://images.pexels.com/photos/91227/pexels-photo-91227.jpeg', 'من چێشتلێنەرم لەوێ، ئەو شەوە جانتایەکی گەورە چەقۆم بردەوە بۆ ماڵەوە بۆ چاککردنەوە، پەیوەندیم بە دزییەکەوە نییە.', isCompleted)}
+                ${createCard('جاک', 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg', 'من پۆلیسی بەردەم مۆزەخانەکە بووم، بەڵام ئەو شەوە لە ماڵەوە بووم و خەوتبووم.', isCompleted)}
                 <h2>شایەتحاڵەکان</h2>
                 ${createWitness('دراوسێ', 'من پۆلیسەکانم بینی جانتایەکیان پێ بوو لۆگۆی چێشتخانەی لەسەر بوو.')}
                 ${createWitness('پاسەوانی دەرەوە', 'هیچ ئۆتۆمبێلێکی پۆلیس لە ناوچەکە نەبوو لەو کاتەدا.')}
-                <button class="solve-btn" id="solve-trigger" onclick="checkAnswer(2, 'تۆماس')">پێشکەشکردنی ئەنجام</button>
+                <button class="solve-btn" id="solve-trigger" onclick="checkAnswer(2, 'تۆماس')" ${isCompleted ? 'disabled' : ''}>${isCompleted ? '✅ ئەم کەیسە چارەسەر کراوە' : 'پێشکەشکردنی ئەنجام'}</button>
             `;
         }
         else if (lvl === 3) {
@@ -339,13 +398,13 @@
                     <img src="dead.jpg" class="evidence-img" style="filter: blur(30px); opacity: 0.3; display: block; margin: 0;">
                 </div>
                 <h2>گومانلێکراوەکان</h2>
-                ${createCard('لۆرێنز', 'https://images.pexels.com/photos/428333/pexels-photo-428333.jpeg', 'من دراوسێی ئەوانم. کاتێک هەستم کرد کە چەند ڕۆژێکە دووکەڵ لە ماڵەکەیانەوە نایەت، چوومە ژوورەوە و تەرمەکانم دۆزییەوە. من زۆر مانگام بۆ دۆشیبوون لەو ماوەیەدا .')}
-                ${createCard('هانس', 'https://images.pexels.com/photos/1516680/pexels-photo-1516680.jpeg', 'من کرێکارێکی کۆن بووم، پێش مانگێک جێم هێشتن چونکە وتم ئەو ماڵە جنۆکەی تێدایە.')}
-                ${createCard('کارڵ', 'https://images.pexels.com/photos/5480696/pexels-photo-5480696.jpeg', 'من تەنها ڕێبوارێک بووم، ئەو شەوە لە دارستانەکە بووم و هیچم نەبینی.')}
+                ${createCard('لۆرێنز', 'https://images.pexels.com/photos/428333/pexels-photo-428333.jpeg', 'من دراوسێی ئەوانم. کاتێک هەستم کرد کە چەند ڕۆژێکە دووکەڵ لە ماڵەکەیانەوە نایەت، چوومە ژوورەوە و تەرمەکانم دۆزییەوە. من زۆر مانگام بۆ دۆشیبوون لەو ماوەیەدا .', isCompleted)}
+                ${createCard('هانس', 'https://images.pexels.com/photos/1516680/pexels-photo-1516680.jpeg', 'من کرێکارێکی کۆن بووم، پێش مانگێک جێم هێشتن چونکە وتم ئەو ماڵە جنۆکەی تێدایە.', isCompleted)}
+                ${createCard('لیندا', 'https://images.pexels.com/photos/5480696/pexels-photo-5480696.jpeg', 'من تەنها ڕێبوارێک بووم، ئەو شەوە لە دارستانەکە بووم و هیچم نەبینی.', isCompleted)}
                 <h2>شایەتحاڵەکان</h2>
                 ${createWitness('پۆستەچی', 'من پۆستەم بۆ بردن، هەستم کرد کەسێک لە پەنجەرەکەوە سەیری دەکردم بەڵام دڵنیام باوکی خێزانەکە نەبوو.')}
                 ${createWitness('شۆفێری تانکەر', 'من دووکەڵی زۆرم بینی لە ماڵەکەدا بۆ ماوەی ٣ ڕۆژ، وەک ئەوەی کەسێک خواردن لێ بنێت.')}
-                <button class="solve-btn" id="solve-trigger" onclick="checkAnswer(3, 'لۆرێنز')">پێشکەشکردنی ئەنجام</button>
+                <button class="solve-btn" id="solve-trigger" onclick="checkAnswer(3, 'لۆرێنز')" ${isCompleted ? 'disabled' : ''}>${isCompleted ? '✅ ئەم کەیسە چارەسەر کراوە' : 'پێشکەشکردنی ئەنجام'}</button>
             `;
         }
         else if (lvl === 4) {
@@ -359,25 +418,25 @@
                 </div>
                 <img src="https://images.pexels.com/photos/271639/pexels-photo-271639.jpeg" class="evidence-img">
                 <h2>نامەی دەنگی (پەیوەندی میوانێکی ئۆتێل بۆ ڕیسێپشن)</h2>
-                <div class="audio-player" onclick="playVoice('hotel.mp3.mov', 'وتەی میوانێک لە هۆتێلەکە:تکایە وەرن بزانن ئەم ئاوە چییە... ڕەنگی زۆر تاریکە و بۆنی تەرم دەدات!', 'fa-file-audio', 'var(--accent-red)')">
+                <div class="audio-player" onclick="playVoice('hotel.mp3.mov', 'وتەی میوانێک لە هۆتێلەکە:تکایە وەرن بزانن ئەم ئاوە بۆوایە... ڕەنگی زۆر تاریکە و بۆنیێکی زۆر ناخۆش دەدات!', 'fa-file-audio', 'var(--accent-red)')">
                     <i class="fas fa-play-circle fa-2x" style="color:var(--accent-red)"></i>
                     <div><strong>GuestRoom_506.mp3</strong><br><small>کلیک بکە بۆ بیستن</small></div>
                 </div>
                 <h2>گومانلێکراوەکان</h2>
-                ${createCard('جێیمس', 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg', 'من پاسەوانی سەقفی ئۆتێلەکەم. ئەو شەوە من کلیلەکانم لای خۆم بوو و هیچ کەس نەچووەتە سەر سەقفەکە. من تەنها بەیانیان دەچم بۆ پشکنینی تانکییەکان.')}
-                ${createCard('پابڵۆ', 'https://images.pexels.com/photos/3777931/pexels-photo-3777931.jpeg', 'من کرێکاری چاککردنەوەی ئۆتێلەکەم. من تەنها کەسم کە کلیلێکی زیادەی سەقفم پێیە. بەڵام من ئەو شەوە خەریکی چاککردنەوەی بۆرییەکان بووم لە نهۆمی یەکەم.')}
-                ${createCard('ماری', 'https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg', 'من سکرتێری ئۆتێلەکەم، من بینیم ئێلیزا بە پەلە چوو بۆ ناو مەسعەدەکە و زۆر دەترسا، وەک ئەوەی کەسێک دوای کەوتبێت.')}
+                ${createCard('جەیمس', 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg', 'من پاسەوانی سەقفی ئۆتێلەکەم. ئەو شەوە من کلیلەکانم لای خۆم بوو و هیچ کەس نەچووەتە سەر سەقفەکە. من تەنها بەیانیان دەچم بۆ پشکنینی تانکییەکان.', isCompleted)}
+                ${createCard('پابلۆ', 'https://images.pexels.com/photos/3777931/pexels-photo-3777931.jpeg', 'من کرێکاری چاککردنەوەی ئۆتێلەکەم. من تەنها کەسم کە کلیلێکی زیادەی سەقفم پێیە. بەڵام من ئەو شەوە خەریکی چاککردنەوەی بۆرییەکان بووم لە نهۆمی یەکەم.', isCompleted)}
+                ${createCard('ماری', 'https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg', 'من سکرتێری ئۆتێلەکەم، من بینیم ئێلیزا بە پەلە چوو بۆ ناو مەسعەدەکە و زۆر دەترسا، وەک ئەوەی کەسێک دوای کەوتبێت.', isCompleted)}
                 <h2>شایەتحاڵەکان</h2>
                 ${createWitness('میوان', 'من گوێم لە دەنگێکی قورس بوو لەسەر سەقفەکە لە کاژێر ٣ی شەو، وەک ئەوەی شتێکی قورس فڕێ درابێتە ناو ئاو.')}
-                ${createWitness('کارگوزار', 'پابڵۆ ئەو شەوە زۆر ئارەقەی کردبوو و جانتایەئیک گەورەی کلیلەکانی پێ بوو کە هەمیشە لە ژووری کارەکەی جێی دەهێشت.')}
+                ${createWitness('کارگوزار', 'پابلۆ ئەو شەوە زۆر ئارەقەی کردبوو و جانتایەکی گەورەی کلیلەکانی پێ بوو کە هەمیشە لە ژووری کارەکەی جێی دەهێشت.')}
                 <div style="background:#251618; padding:15px; margin:15px 0; border:1px solid var(--accent-red);">بەڵگەی پزیشکی: ئێلیزا نەیتوانیوە بە تەنها سەرەقەپاغی تانکییەکە دابخاتەوە دوای ئەوەی چووەتە ناوەوە. یەکێک لە دەرەوە سەرەکەی بۆ داخستووە!</div>
-                <button class="solve-btn" id="solve-trigger" onclick="checkAnswer(4, 'پابڵۆ')">پێشکەشکردنی ئەنجام</button>
+                <button class="solve-btn" id="solve-trigger" onclick="checkAnswer(4, 'پابلۆ')" ${isCompleted ? 'disabled' : ''}>${isCompleted ? '✅ ئەم کەیسە چارەسەر کراوە' : 'پێشکەشکردنی ئەنجام'}</button>
             `;
         }
     }
 
-    function createCard(id, img, txt) {
-        return `<div class="card-item" id="card-${id}" onclick="selectItem('${id}')"><img src="${img}"><div><strong>${id}:</strong><div class="info-txt">${txt}</div></div></div>`;
+    function createCard(id, img, txt, disabled = false) {
+        return `<div class="card-item" id="card-${id}" ${disabled ? 'style="cursor:default;"' : `onclick="selectItem('${id}')"`}><img src="${img}"><div><strong>${id}:</strong><div class="info-txt">${txt}</div></div></div>`;
     }
 
     function createWitness(name, txt) {
@@ -436,6 +495,7 @@
             selectedCard.classList.add('correct');
             btn.innerHTML = "✅ وەڵامەکە ڕاستە!";
             btn.style.background = "#22c55e";
+            btn.disabled = true; // داخستنی دوگمەکە دوای سەرکەوتن
             
             if (lvl === currentLevel) {
                 currentLevel = lvl + 1;
@@ -444,7 +504,7 @@
             }
             
             setTimeout(() => {
-                playVoice('', "✅ پیرۆزە! تۆ مەتەڵی ئەم کەیسە تۆقێنەرەت حەل کرد و پلەکەت بەرزبووەوە.", 'fa-check-circle', '#22c55e');
+                playVoice('', "✅ پیرۆزە! تۆ مەتەڵی ئەم کەیسەت حەل کرد و پلەکەت بەرزبووەوە و کەلوپەلی نوێت وەرگرت.", 'fa-check-circle', '#22c55e');
             }, 500);
 
         } else {
